@@ -1,0 +1,63 @@
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn import preprocessing
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+# Set the environment variable to avoid memory leak issue on Windows
+os.environ['OMP_NUM_THREADS'] = '1'
+
+# Set Seaborn style
+sns.set()
+
+# Load data
+data = pd.read_csv("D:Mall_Customers.csv")
+df = pd.DataFrame(data)
+
+# Check the first few rows of the data
+print(df.head())
+
+# Drop the 'Genre' column
+df1 = df.drop('Genre', axis=1)
+
+# Scatter plot of Annual Income vs Spending Score
+plt.scatter(data['Annual Income (k$)'], data['Spending Score (1-100)'])
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.show()
+
+# Scale the data
+data_scaled = preprocessing.scale(df1)
+
+# Within-cluster sum of squares (WCSS)
+wcss = []
+
+for i in range(1, 8):
+    kmeans = KMeans(n_clusters=i, random_state=0, n_init=10)
+    kmeans.fit(data_scaled)
+    wcss.append(kmeans.inertia_)
+
+# Plotting the Elbow Method graph
+plt.plot(range(1, 8), wcss, marker='o')
+plt.title('Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+plt.plot(range(1,8),w)
+plt.xlabel('Cluster Number')
+plt.ylabel('wcss value')
+plt.show()
+# K-Means
+# Training model
+kmean_cluster = KMeans(4)
+kmean_cluster.fit(data_scaled)
+cluster_data = df1.copy()
+cluster_data['cluster_pred'] = kmean_cluster.fit_predict(data_scaled)
+kmean_cluster.labels_
+plt.scatter(data['Annual Income (k$)'], data['Spending Score (1-100)'],c=cluster_data['cluster_pred'],cmap='rainbow')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.show()
